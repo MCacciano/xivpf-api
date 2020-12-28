@@ -1,10 +1,12 @@
 [
   {
     "name": "EZ Fudge",
-    "slug": "ez-fudge"
+    "slug": "ez-fudge",
+    "game": "Final Fantasy XIV"
   },
   {
     "name": "Git Gud",
-    "slug": "git-gud"
+    "slug": "git-gud",
+    "game": "Final Fantasy XIV"
   }
 ]

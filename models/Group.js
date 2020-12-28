@@ -9,7 +9,13 @@ const GroupSchema = new Schema({
     trim: true,
     maxLength: [50, 'Can not be longer than 50 characters']
   },
-  slug: String
+  slug: String,
+  game: {
+    type: String,
+    enum: ['World of Warcraft', 'Final Fantasy XIV', 'Black Desert Online'],
+    default: '',
+    required: false
+  }
 });
 
 module.exports = mongoose.model('Group', GroupSchema);

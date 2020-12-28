@@ -9,6 +9,7 @@ dotenv.config({ path: './config/.env' });
 connectDB();
 
 // Routes
+const authRoutes = require('./routes/auth');
 const groupsRoutes = require('./routes/groups');
 
 const app = express();
@@ -17,7 +18,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// body parser
+app.use(express.json());
+
 // Mount routers
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/groups', groupsRoutes);
 
 const PORT = process.env.PORT || 5000;
