@@ -1,11 +1,13 @@
-const Group = require('../models/Group');
+const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+
+const Group = require('../models/Group');
 
 // @desc      Get all groups
 // @route     GET /api/v1/groups
 // @access    Public
 exports.getGroups = asyncHandler(async (req, res, next) => {
-  const groups = await Group.find();
+  const groups = await Group.find(req.query);
 
   res.status(200).json({ success: true, data: groups, count: groups.length });
 });
@@ -17,7 +19,7 @@ exports.getGroup = asyncHandler(async (req, res, next) => {
   const group = await Group.findById(req.params.id);
 
   if (!group) {
-    return res.status(400).json({ success: false });
+    return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
   }
 
   res.status(200).json({ success: true, data: group });
@@ -42,7 +44,7 @@ exports.updateGroup = asyncHandler(async (req, res, next) => {
   });
 
   if (!group) {
-    return res.status(400).json({ success: false });
+    return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
   }
 
   res.status(200).json({ success: true, data: group });
@@ -52,5 +54,11 @@ exports.updateGroup = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/groups/:id
 // @access    Private
 exports.deleteGroup = asyncHandler(async (req, res, next) => {
-  res.status(200).json({ success: true, data: `Delete group with the id ${req.params.id}` });
+  const group = await Group.findByIdAndDelete(req.params.id);
+
+  if (!group) {
+    return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
+  }
+
+  res.status(200).json({ success: true, data: {} });
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
-
+const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
 dotenv.config({ path: './config/.env' });
@@ -24,6 +24,9 @@ app.use(express.json());
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/groups', groupsRoutes);
+
+// errorHandler middleware
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

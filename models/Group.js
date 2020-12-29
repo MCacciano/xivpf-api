@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+
 const Schema = mongoose.Schema;
 
 const GroupSchema = new Schema({
@@ -12,10 +14,30 @@ const GroupSchema = new Schema({
   slug: String,
   game: {
     type: String,
-    enum: ['World of Warcraft', 'Final Fantasy XIV', 'Black Desert Online'],
-    default: '',
-    required: false
+    required: false,
+    enum: ['World of Warcraft', 'Final Fantasy XIV', 'Black Desert Online']
+  },
+  owner: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  isPug: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  isStatic: {
+    type: Boolean,
+    required: false,
+    default: false
   }
+});
+
+// Create group slug from the name
+GroupSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
 module.exports = mongoose.model('Group', GroupSchema);

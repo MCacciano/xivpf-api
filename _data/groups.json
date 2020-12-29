@@ -1,12 +1,30 @@
 [
   {
     "name": "EZ Fudge",
-    "slug": "ez-fudge",
-    "game": "Final Fantasy XIV"
+    "game": "Final Fantasy XIV",
+    "owner": "Marg",
+    "isPug": false,
+    "isStatic": true
   },
   {
     "name": "Git Gud",
-    "slug": "git-gud",
-    "game": "Final Fantasy XIV"
+    "game": "Final Fantasy XIV",
+    "owner": "Ora",
+    "isPug": false,
+    "isStatic": true
+  },
+  {
+    "name": "Some Guild",
+    "game": "World of Warcraft",
+    "owner": "Rando",
+    "isPug": true,
+    "isStatic": false
+  },
+  {
+    "name": "Another Guild",
+    "game": "Black Desert Online",
+    "owner": "Joe",
+    "isPug": true,
+    "isStatic": false
   }
 ]
