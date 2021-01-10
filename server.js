@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
@@ -15,14 +17,16 @@ const groupsRoutes = require('./routes/groups');
 
 const app = express();
 
+// cookie parser
+app.use(cookieParser());
+// body parser
+app.use(express.json());
+// cors
 app.use(cors());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-
-// body parser
-app.use(express.json());
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
