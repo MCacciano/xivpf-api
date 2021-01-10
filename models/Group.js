@@ -13,9 +13,8 @@ const GroupSchema = new Schema({
   },
   slug: String,
   game: {
-    type: String,
-    required: false,
-    enum: ['World of Warcraft', 'Final Fantasy XIV', 'Black Desert Online']
+    type: Schema.Types.ObjectId,
+    ref: 'Game'
   },
   owner: {
     type: String,
