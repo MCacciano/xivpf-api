@@ -29,6 +29,9 @@ exports.getGroup = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/groups
 // @access    Private
 exports.createGroup = asyncHandler(async (req, res, next) => {
+  // Add user to req.body
+  req.body.user = req.user.id;
+
   const group = await Group.create(req.body);
 
   res.status(201).json({ success: true, data: group });
@@ -38,14 +41,23 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/groups/:id
 // @access    Private
 exports.updateGroup = asyncHandler(async (req, res, next) => {
-  const group = await Group.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true
-  });
+  let group = await Group.findById(req.params.id);
 
   if (!group) {
     return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
   }
+
+  // Make sure user is Group owner
+  if (group.owner.toString() !== req.user.id) {
+    return next(
+      new ErrorResponse(`User ${req.user.id} is not authorized to update this group`, 401)
+    );
+  }
+
+  group = await Group.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
 
   res.status(200).json({ success: true, data: group });
 });

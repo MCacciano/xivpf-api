@@ -2,6 +2,7 @@ const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 
 const User = require('../models/User');
+const Game = require('../models/Game');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -74,5 +75,11 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access    Private
 exports.getMe = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
+  const games = await Game.find();
+  const userGames = new Set([...games.map(({ _id }) => _id), ...user.games]);
+
+  console.log('games :>> ', games);
+  console.log('userGames :>> ', userGames);
+
   res.status(200).json({ success: true, data: user });
 });

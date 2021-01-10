@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const Game = require('../models/Game');
+
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  name: {
+  userName: {
     type: String,
     required: [true, 'Please enter a name']
   },
@@ -26,6 +28,13 @@ const UserSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  games: {
+    type: Array,
+    of: {
+      type: Schema.Types.ObjectId,
+      ref: 'Game'
+    }
   }
 });
 

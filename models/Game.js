@@ -5,8 +5,8 @@ const GameSchema = new Schema({
   name: {
     type: String,
     required: true,
-    enum: ['World of Warcraft', 'Final Fantasy XIV']
+    enum: ['World of Warcraft', 'Final Fantasy XIV', 'Black Desert Online']
   }
 });
 
-module.export = mongoose.model('Game', GameSchema);
+module.exports = mongoose.model('Game', GameSchema);

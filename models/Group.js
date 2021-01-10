@@ -12,14 +12,19 @@ const GroupSchema = new Schema({
     maxLength: [50, 'Can not be longer than 50 characters']
   },
   slug: String,
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   game: {
     type: Schema.Types.ObjectId,
     ref: 'Game'
-  },
-  owner: {
-    type: String,
-    required: true,
-    trim: true
   },
   isPug: {
     type: Boolean,
@@ -36,6 +41,9 @@ const GroupSchema = new Schema({
 // Create group slug from the name
 GroupSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+
+  // on initial creation the creator gets set to the first owner
+  this.creator = this.owner;
   next();
 });
 
