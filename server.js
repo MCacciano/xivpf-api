@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const errorHandler = require('./middleware/error');
@@ -13,6 +14,8 @@ const authRoutes = require('./routes/auth');
 const groupsRoutes = require('./routes/groups');
 
 const app = express();
+
+app.use(cors());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
