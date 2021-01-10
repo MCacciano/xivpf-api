@@ -9,7 +9,9 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getGroups).post(createGroup);
-router.route('/:id').get(getGroup).put(updateGroup).delete(deleteGroup);
+const { protect } = require('../middleware/auth');
+
+router.route('/').get(getGroups).post(protect, createGroup);
+router.route('/:id').get(getGroup).put(protect, updateGroup).delete(protect, deleteGroup);
 
 module.exports = router;
