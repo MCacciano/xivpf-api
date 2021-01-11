@@ -32,6 +32,8 @@ const Login = () => {
       const { data } = await lfg.post('/auth/login', loginForm);
       const { token } = data;
 
+      localStorage.setItem('lfg_user', token);
+
       const { data: user } = await lfg.get('/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`

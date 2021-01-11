@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useUserContextState, useUserContextDispatch } from '../context/user';
 import { SET_USER } from '../context/user/types';
 

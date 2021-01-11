@@ -1,6 +1,6 @@
 import { SET_GROUPS } from './types';
 
-export default (state, { type, payload }) => {
+const groupContextReducer = (state, { type, payload }) => {
   switch (type) {
     case SET_GROUPS:
       return { ...state, groups: payload };
@@ -9,3 +9,5 @@ export default (state, { type, payload }) => {
       return state;
   }
 };
+
+export default groupContextReducer;

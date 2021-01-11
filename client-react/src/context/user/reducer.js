@@ -1,6 +1,6 @@
 import { SET_USER } from './types';
 
-export default (state, { type, payload }) => {
+const userContextReducer = (state, { type, payload }) => {
   switch (type) {
     case SET_USER:
       return { ...state, user: payload };
@@ -8,3 +8,5 @@ export default (state, { type, payload }) => {
       return state;
   }
 };
+
+export default userContextReducer;
