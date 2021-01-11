@@ -48,6 +48,45 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+
+  res.status(200).json({ success: true, data: {} });
+});
+
+// @desc      Get current logged in user
+// @route     GET /api/v1/auth/me
+// @access    Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({ success: true, data: user });
+});
+
+// @desc      Forgot password
+// @route     GET /api/v1/auth/forgot-password
+// @access    Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse(`There is no user with that email`, 404));
+  }
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({ success: true, data: user });
+});
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
@@ -69,17 +108,3 @@ const sendTokenResponse = (user, statusCode, res) => {
   .cookie('token', token, options)
   .json({ success: true, token });
 };
-
-// @desc      Get curernt logged in user
-// @route     GET /api/v1/auth/me
-// @access    Private
-exports.getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const games = await Game.find();
-  const userGames = new Set([...games.map(({ _id }) => _id), ...user.games]);
-
-  console.log('games :>> ', games);
-  console.log('userGames :>> ', userGames);
-
-  res.status(200).json({ success: true, data: user });
-});

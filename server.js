@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
@@ -27,6 +28,9 @@ app.use(cors());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Sanitize data
+app.use(mongoSanitize());
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
