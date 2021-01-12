@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import lfg from './axios/lfgroup';
 
+import useUserContext from './hooks/useUserCtx';
+
 import AuthRoute from './components/AuthRoute';
 import Navbar from './components/Navbar';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Groups from './pages/Groups';
-import useUserContext from './hooks/useUserCtx';
 
 const App = () => {
   const { user, setUser, isLoading, setIsLoading } = useUserContext();

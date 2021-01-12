@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import lfg from '../axios/lfgroup';
+import lfg from '../../axios/lfgroup';
 
-import useUserContext from '../hooks/useUserCtx';
+import useUserContext from '../../hooks/useUserCtx';
 
 const Navbar = () => {
   const { user, setUser } = useUserContext();
