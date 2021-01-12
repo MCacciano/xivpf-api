@@ -8,7 +8,7 @@ const Game = require('../models/Game');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  userName: {
+  name: {
     type: String,
     required: [true, 'Please enter a name']
   },

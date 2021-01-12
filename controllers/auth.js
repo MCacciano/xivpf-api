@@ -17,6 +17,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     password
   });
 
+  console.log('user :>> ', user);
+
   sendTokenResponse(user, 200, res);
 });
 
