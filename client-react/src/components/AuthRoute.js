@@ -1,10 +1,20 @@
 import { Redirect, Route } from 'react-router-dom';
 import useUserContext from '../hooks/useUserCtx';
 
-const AuthRoute = ({ component: Component, ...props }) => {
+const AuthRoute = ({ component: Component, ...rest }) => {
   const { user } = useUserContext();
 
-  return user ? <Component {...props} /> : <Redirect to="/login" />;
+  return (
+    <Route
+      {...rest}
+      render={props => {
+        if (user) {
+          return <Component {...props} />;
+        }
+        return <Redirect to="/login" />;
+      }}
+    />
+  );
 };
 
 export default AuthRoute;

@@ -11,6 +11,7 @@ const Navbar = () => {
     try {
       await lfg.get('/auth/logout');
       setUser(null);
+      localStorage.removeItem('lfg_user');
     } catch (err) {
       console.error(err);
     }

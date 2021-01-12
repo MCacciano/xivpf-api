@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import lfg from './axios/lfgroup';
 
 import AuthRoute from './components/AuthRoute';
@@ -11,7 +11,7 @@ import Groups from './pages/Groups';
 import useUserContext from './hooks/useUserCtx';
 
 const App = () => {
-  const { user, setUser } = useUserContext();
+  const { user, setUser, isLoading, setIsLoading } = useUserContext();
 
   // user token is being set in localStorage so we can log the
   // user back in on page refresh
@@ -34,19 +34,25 @@ const App = () => {
           } catch (err) {
             console.error(err);
           }
+        } else {
+          setIsLoading(false);
         }
       };
 
       getUser();
     }
+    // only on mount
+    // eslint-disable-next-line
   }, []);
+
+  if (isLoading) return null;
 
   return (
     <>
       <Navbar />
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/login">{user ? <Redirect to="/groups" /> : <Login />}</Route>
+        <Route exact path="/login" component={Login} />
         <AuthRoute path="/groups" component={Groups} />
       </Switch>
     </>

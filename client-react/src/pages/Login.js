@@ -4,7 +4,7 @@ import lfg from '../axios/lfgroup';
 import useUserContext from '../hooks/useUserCtx';
 
 const Login = () => {
-  const { user, setUser } = useUserContext();
+  const { user, isLoading, setUser } = useUserContext();
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: ''
@@ -50,10 +50,11 @@ const Login = () => {
     console.log(signUpForm);
   };
 
-  useEffect(() => console.log('user', user), [user]);
-  return user ? (
-    <Redirect to="/" />
-  ) : (
+  if (user && !isLoading) {
+    return <Redirect to="/groups" />;
+  }
+
+  return (
     <div className="absolute inset-0 w-screen h-screen flex justify-around items-center">
       <form
         onSubmit={e => e.preventDefault()}
