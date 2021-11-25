@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const Game = require('../models/Game');
-
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -29,24 +27,14 @@ const UserSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  },
-  games: {
-    type: Array,
-    of: {
-      type: Schema.Types.ObjectId,
-      ref: 'Game'
-    }
   }
 });
 
 // Encrypt password with bcryptjs
 UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+  if (!this.isModified('password')) next();
 
   const salt = await bcrypt.genSalt(10);
-
   this.password = await bcrypt.hash(this.password, salt);
 });
 

@@ -1,8 +1,8 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
+const sendTokenResponse = require('../utils/sendTokenResponse');
 
 const User = require('../models/User');
-const Game = require('../models/Game');
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -16,8 +16,6 @@ exports.register = asyncHandler(async (req, res, next) => {
     email,
     password
   });
-
-  console.log('user :>> ', user);
 
   sendTokenResponse(user, 200, res);
 });
@@ -90,23 +88,23 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 });
 
 // Get token from model, create cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
-  // Create token
-  const token = user.getSignedJwtToken();
+// const sendTokenResponse = (user, statusCode, res) => {
+//   // Create token
+//   const token = user.getSignedJwtToken();
 
-  const options = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-    httpOnly: true
-  };
+//   const options = {
+//     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+//     httpOnly: true
+//   };
 
-  // it prod use the secure flag for https
-  if (process.env.NODE_ENV === 'production') {
-    options.secure = true;
-  }
+//   // it prod use the secure flag for https
+//   if (process.env.NODE_ENV === 'production') {
+//     options.secure = true;
+//   }
 
-  // prettier-ignore
-  res
-  .status(statusCode)
-  .cookie('token', token, options)
-  .json({ success: true, token });
-};
+//   // prettier-ignore
+//   res
+//   .status(statusCode)
+//   .cookie('token', token, options)
+//   .json({ success: true, token });
+// };
