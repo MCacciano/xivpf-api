@@ -29,10 +29,16 @@ exports.getGroup = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/groups
 // @access    Private
 exports.createGroup = asyncHandler(async (req, res, next) => {
-  // Add user to req.body
   req.body.user = req.user.id;
 
-  const group = await Group.create(req.body);
+  // check if user already has a group created
+  const publishedGroup = await Group.findOne({ user: req.user.id });
+  
+  if (publishedGroup) {
+    return next(new ErrorResponse(`The user with ID ${req.user.id} has already created a group.`));
+  }
+
+  const group = await Group.create({ ...req.body, owner: req.user.id });
 
   res.status(201).json({ success: true, data: group });
 });
