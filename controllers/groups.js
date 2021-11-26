@@ -32,7 +32,7 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
 
   // check if user already has a group created
-  const publishedGroup = await Group.findOne({ user: req.user.id });
+  const publishedGroup = await Group.findOne({ owner: req.user.id });
   
   if (publishedGroup) {
     return next(new ErrorResponse(`The user with ID ${req.user.id} has already created a group.`));

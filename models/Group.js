@@ -16,12 +16,26 @@ const GroupSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  members: {
+    type: [Schema.Types.ObjectId],
+    ref: 'User'
+  },
+  description: String,
+  progType: {
+    type: String,
+    enum: [
+      'Casual',
+      'Midcore',
+      'Hardcore',
+    ]
+  },
 });
 
 // Create group slug from the name
 GroupSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  this.members = [this.owner]
 
   next();
 });
