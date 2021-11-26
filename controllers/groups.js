@@ -71,40 +71,22 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateGroup = asyncHandler(async (req, res, next) => {
   let group = await Group.findById(req.params.id);
-  let body;
 
   if (!group) {
     return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
   }
 
   // Make sure user is Group owner
-  if (group.owner.toString() === req.user.id) {
-    body = req.body;
-  } else {
-    if (group.members.includes(req.user.id)) {
-      body = { members: group.members.filter(member => member.toString() !== req.user.id) };
-      const user = await User.findById(req.user.id);
-
-      await User.findByIdAndUpdate(
-        req.user.id,
-        { groups: user.groups.filter(group => group.toString() !== req.params.id) },
-        { new: true, runValidators: true }
-      );
-      
-    } else {
-      body = { members: [...group.members, req.user.id] };
-
-      const user = await User.findById(req.user.id);
-
-      await User.findByIdAndUpdate(
-        req.user.id,
-        { groups: [...user.groups, req.params.id] },
-        { new: true, runValidators: true }
-      );
-    }
+  if (group.owner.toString() !== req.user.id) {
+    return next(
+      new ErrorResponse(
+        `User with the id ${req.user.id} not authorized to make changes to this group`,
+        401
+      )
+    );
   }
 
-  group = await Group.findByIdAndUpdate(req.params.id, body, {
+  group = await Group.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
   });
@@ -123,4 +105,40 @@ exports.deleteGroup = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: {} });
+});
+
+// @desc      update a groups members and a users groups when user joins or leaves a group
+// @route     PUT /api/v1/groups/:id/join
+// @access    Private
+exports.joinGroup = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  let group = await Group.findById(req.params.id);
+
+  if (!group) {
+    return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
+  }
+
+  let members = group.members || [];
+  let groups = user.groups || [];
+
+  if (members.includes(req.user.id)) {
+    members = members.filter(id => id.toString() !== req.user.id);
+    groups = groups.filter(id => id.toString() !== req.params.id);
+  } else {
+    members = [...members, req.user.id];
+    groups = [...groups, req.params.id];
+  }
+
+  await Group.findByIdAndUpdate(
+    req.params.id,
+    { members },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  await User.findByIdAndUpdate(req.user.id, { groups }, { new: true, runValidators: true });
+
+  res.status(200).json({ success: true });
 });

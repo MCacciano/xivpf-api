@@ -1,19 +1,20 @@
 import Head from 'next/head';
 import { useState } from 'react';
 
-export default function Home() {
-  const API_URL = 'http://localhost:5000/api/v1';
+const API_URL = 'http://localhost:5000/api/v1';
+
+const fetchGroups = async () => {
+  const res = await fetch(`${API_URL}/groups`);
+  const { data } = await res.json();
+  return data;
+};
+
+export default function Home({ data }) {
+  // console.log('groups', groups);
 
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
-  const [groups, setGroups] = useState([]);
-
-  const fetchGroups = async () => {
-    const res = await fetch(`${API_URL}/groups`);
-    const { data } = await res.json();
-
-    setGroups(data);
-  };
+  const [groups, setGroups] = useState(data || []);
 
   const handleOnLogin = async () => {
     const res = await fetch(`${API_URL}/auth/login`, {
@@ -35,18 +36,16 @@ export default function Home() {
 
     setToken(token);
     setUser(userDetails);
-    fetchGroups();
   };
 
   const handleOnJoinGroup = async id => {
     try {
-      const res = await fetch(`${API_URL}/groups/${id}`, {
+      await fetch(`${API_URL}/groups/${id}/join`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
       });
-      const data = await res.json();
 
-      fetchGroups();
+      setGroups(await fetchGroups());
     } catch (err) {
       console.error(`Error: ${err}`);
     }
@@ -69,17 +68,17 @@ export default function Home() {
             <div key={_id} className="border border-gray-500 rounded p-2 shadow">
               <div className="flex justify-between items-center ">
                 <h2 className="text-lg">{name}</h2>
-                {owner !== user._id && (
+                {user && owner !== user._id && (
                   <button
                     type="button"
                     onClick={() => handleOnJoinGroup(_id)}
                     className={`border rounded font-semibold text-sm py-1 px-2 ${
-                      members.some(({ _id }) => _id === user._id)
+                      members.some(({ _id }) => _id === user?._id)
                         ? 'border-red-600 text-red-600'
                         : 'border-blue-600 text-blue-600'
                     }`}
                   >
-                    {members.some(({ _id }) => _id === user._id) ? '- Leave' : '+ Join'}
+                    {members.some(({ _id }) => _id === user?._id) ? '- Leave' : '+ Join'}
                   </button>
                 )}
               </div>
@@ -96,3 +95,7 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps = async () => ({
+  props: { data: await fetchGroups() }
+});
