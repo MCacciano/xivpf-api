@@ -2,6 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
 const Group = require('../models/Group');
+const User = require('../models/User');
 
 const joinGroup = async (group, groupId, userId) => {
   return await Group.findByIdAndUpdate(
@@ -81,14 +82,25 @@ exports.updateGroup = asyncHandler(async (req, res, next) => {
     body = req.body;
   } else {
     if (group.members.includes(req.user.id)) {
-      console.log('leave', group.members);
-      console.log(`req.user.id`, req.user.id);
-      const tester = group.members.filter(member => member !== req.user.id)
-      console.log(`tester`, tester)
-      body = { members: tester };
+      body = { members: group.members.filter(member => member.toString() !== req.user.id) };
+      const user = await User.findById(req.user.id);
+
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { groups: user.groups.filter(group => group.toString() !== req.params.id) },
+        { new: true, runValidators: true }
+      );
+      
     } else {
-      console.log('join');
       body = { members: [...group.members, req.user.id] };
+
+      const user = await User.findById(req.user.id);
+
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { groups: [...user.groups, req.params.id] },
+        { new: true, runValidators: true }
+      );
     }
   }
 

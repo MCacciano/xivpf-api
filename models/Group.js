@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('../models/User');
 
 const Schema = mongoose.Schema;
 
@@ -24,18 +25,24 @@ const GroupSchema = new Schema({
   description: String,
   progType: {
     type: String,
-    enum: [
-      'Casual',
-      'Midcore',
-      'Hardcore',
-    ]
-  },
+    enum: ['Casual', 'Midcore', 'Hardcore']
+  }
 });
 
 // Create group slug from the name
-GroupSchema.pre('save', function (next) {
+GroupSchema.pre('save', async function (next) {
   this.slug = slugify(this.name, { lower: true });
-  this.members = [this.owner]
+  this.members = [this.owner];
+
+  const user = await User.findById(this.owner);
+  await User.findByIdAndUpdate(
+    this.owner,
+    { groups: [...user.groups, this._id] },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
 
   next();
 });
