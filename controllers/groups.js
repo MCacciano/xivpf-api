@@ -4,28 +4,6 @@ const asyncHandler = require('../middleware/async');
 const Group = require('../models/Group');
 const User = require('../models/User');
 
-const joinGroup = async (group, groupId, userId) => {
-  return await Group.findByIdAndUpdate(
-    groupId,
-    { members: [...group.members, userId] },
-    {
-      new: true,
-      runValidators: true
-    }
-  );
-};
-
-const leaveGroup = async (group, groupId, userId) => {
-  return await Group.findByIdAndUpdate(
-    groupId,
-    { members: group.members.filter(id => id !== userId) },
-    {
-      new: true,
-      runValidators: true
-    }
-  );
-};
-
 // @desc      Get all groups
 // @route     GET /api/v1/groups
 // @access    Public
@@ -112,7 +90,7 @@ exports.deleteGroup = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.joinGroup = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-  let group = await Group.findById(req.params.id);
+  const group = await Group.findById(req.params.id);
 
   if (!group) {
     return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));

@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useState } from 'react';
 
 const API_URL = 'http://localhost:5000/api/v1';
