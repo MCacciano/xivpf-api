@@ -1,19 +1,22 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
+  const API_URL = 'http://localhost:5000/api/v1';
+
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [groups, setGroups] = useState([]);
 
   const fetchGroups = async () => {
-    const res = await fetch('http://localhost:5000/api/v1/groups');
+    const res = await fetch(`${API_URL}/groups`);
     const { data } = await res.json();
 
     setGroups(data);
   };
 
   const handleOnLogin = async () => {
-    const res = await fetch('http://localhost:5000/api/v1/auth/login', {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -24,21 +27,26 @@ export default function Home() {
       })
     });
     const { token } = await res.json();
+
+    const userRes = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const { data: userDetails } = await userRes.json();
+
     setToken(token);
+    setUser(userDetails);
     fetchGroups();
   };
 
-  const handleOnJoinGroup = async e => {
+  const handleOnJoinGroup = async id => {
     try {
-      const res = await fetch(`http://localhost:5000/api/v1/groups/${e.target.id}`, {
+      const res = await fetch(`${API_URL}/groups/${id}`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
       });
       const data = await res.json();
 
       fetchGroups();
-
-      console.log(`data`, data);
     } catch (err) {
       console.error(`Error: ${err}`);
     }
@@ -56,24 +64,34 @@ export default function Home() {
         </button>
       </div>
       <div className="flex flex-col space-y-6 m-10">
-        {groups.map(({ _id, name, members }) => (
-          <div key={_id} className="border border-gray-500 rounded p-2 shadow">
-            <div className="flex justify-between items-center ">
-              <h2>{name}</h2>
-              <button
-                type="button"
-                id={_id}
-                onClick={handleOnJoinGroup}
-                className="border rounded bg-blue-600 text-white font-semibold text-sm py-1 px-2"
-              >
-                + Join
-              </button>
+        {groups.map(({ _id, name, members, owner }) => {
+          return (
+            <div key={_id} className="border border-gray-500 rounded p-2 shadow">
+              <div className="flex justify-between items-center ">
+                <h2 className="text-lg">{name}</h2>
+                {owner !== user._id && (
+                  <button
+                    type="button"
+                    onClick={() => handleOnJoinGroup(_id)}
+                    className={`border rounded font-semibold text-sm py-1 px-2 ${
+                      members.some(({ _id }) => _id === user._id)
+                        ? 'border-red-600 text-red-600'
+                        : 'border-blue-600 text-blue-600'
+                    }`}
+                  >
+                    {members.some(({ _id }) => _id === user._id) ? '- Leave' : '+ Join'}
+                  </button>
+                )}
+              </div>
+              <div className="text-sm">
+                <h2 className="font-medium">Members</h2>
+                <div className="flex space-x-4 text-blue-600">
+                  {members.length && members.map(({ _id, name }) => <div key={_id}>{name}</div>)}
+                </div>
+              </div>
             </div>
-            <div className="text-blue-600">
-              {members.length && members.map(({ _id, name }) => <div key={_id}>{name}</div>)}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
