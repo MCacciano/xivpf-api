@@ -3,11 +3,33 @@ const asyncHandler = require('../middleware/async');
 
 const Group = require('../models/Group');
 
+const joinGroup = async (group, groupId, userId) => {
+  return await Group.findByIdAndUpdate(
+    groupId,
+    { members: [...group.members, userId] },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+};
+
+const leaveGroup = async (group, groupId, userId) => {
+  return await Group.findByIdAndUpdate(
+    groupId,
+    { members: group.members.filter(id => id !== userId) },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+};
+
 // @desc      Get all groups
 // @route     GET /api/v1/groups
 // @access    Public
 exports.getGroups = asyncHandler(async (req, res, next) => {
-  const groups = await Group.find(req.query);
+  const groups = await Group.find(req.query).populate(`members`, `name`);
 
   res.status(200).json({ success: true, data: groups, count: groups.length });
 });
@@ -33,7 +55,7 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
 
   // check if user already has a group created
   const publishedGroup = await Group.findOne({ owner: req.user.id });
-  
+
   if (publishedGroup) {
     return next(new ErrorResponse(`The user with ID ${req.user.id} has already created a group.`));
   }
@@ -48,19 +70,29 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.updateGroup = asyncHandler(async (req, res, next) => {
   let group = await Group.findById(req.params.id);
+  let body;
 
   if (!group) {
     return next(new ErrorResponse(`Group not found with ID of ${req.params.id}`, 404));
   }
 
   // Make sure user is Group owner
-  if (group.owner.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(`User ${req.user.id} is not authorized to update this group`, 401)
-    );
+  if (group.owner.toString() === req.user.id) {
+    body = req.body;
+  } else {
+    if (group.members.includes(req.user.id)) {
+      console.log('leave', group.members);
+      console.log(`req.user.id`, req.user.id);
+      const tester = group.members.filter(member => member !== req.user.id)
+      console.log(`tester`, tester)
+      body = { members: tester };
+    } else {
+      console.log('join');
+      body = { members: [...group.members, req.user.id] };
+    }
   }
 
-  group = await Group.findByIdAndUpdate(req.params.id, req.body, {
+  group = await Group.findByIdAndUpdate(req.params.id, body, {
     new: true,
     runValidators: true
   });
