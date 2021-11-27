@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import PropTypes from 'prop-types';
 import useUser from '../../hooks/useUser';
 
 const API_URL = 'http://localhost:5000/api/v1';
@@ -7,31 +6,8 @@ const API_URL = 'http://localhost:5000/api/v1';
 const Navigation = () => {
   const {
     state: { user },
-    setUser,
-    setToken
+    setUser
   } = useUser();
-
-  const handleOnLogin = async () => {
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: 'mozzey@test.com',
-        password: '123456'
-      })
-    });
-    const { token } = await res.json();
-
-    const userRes = await fetch(`${API_URL}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const { data: userDetails } = await userRes.json();
-
-    setToken(token);
-    setUser(userDetails);
-  };
 
   const handleOnLogout = async () => {
     try {
@@ -43,8 +19,13 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="flex justify-between items-center p-6 border-b border-black">
-      <h2 className="font-bold text-2xl">LFGPF</h2>
+    <nav
+      className="sticky top-0 flex justify-between items-center p-6 border-b border-black bg-white"
+      style={{ zIndex: '9999' }}
+    >
+      <Link href="/">
+        <a className="font-bold text-2xl">LFGPF</a>
+      </Link>
       {user ? (
         <div className="flex space-x-4">
           <p>{user.name}</p>
@@ -54,9 +35,6 @@ const Navigation = () => {
         </div>
       ) : (
         <div className="flex space-x-2">
-          <button type="button" onClick={handleOnLogin} className="text-red-600 text-xs underline">
-            quick login
-          </button>
           <Link href="/login">
             <a className="h-full border border-blue-600 text-blue-600 font-semibold text-sm py-1 px-2 rounded shadow">
               Login
