@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import Navigation from '../components/Navigation';
+
 const API_URL = 'http://localhost:5000/api/v1';
 
 const fetchGroups = async () => {
@@ -9,8 +11,6 @@ const fetchGroups = async () => {
 };
 
 export default function Home({ data }) {
-  // console.log('groups', groups);
-
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [groups, setGroups] = useState(data || []);
@@ -37,6 +37,15 @@ export default function Home({ data }) {
     setUser(userDetails);
   };
 
+  const handleOnLogout = async () => {
+    try {
+      await fetch(`${API_URL}/auth/logout`);
+      setUser(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleOnJoinGroup = async id => {
     try {
       await fetch(`${API_URL}/groups/${id}/join`, {
@@ -52,16 +61,8 @@ export default function Home({ data }) {
 
   return (
     <div>
-      <div>
-        <button
-          type="button"
-          onClick={handleOnLogin}
-          className="border rounded bg-blue-600 text-white font-semibold text-sm py-1 px-2"
-        >
-          Login
-        </button>
-      </div>
-      <div className="flex flex-col space-y-6 m-10">
+      <Navigation user={user} onLogin={handleOnLogin} onLogout={handleOnLogout} />
+      <div className="flex flex-col space-y-6 m-6">
         {groups.map(({ _id, name, members, owner }) => {
           return (
             <div key={_id} className="border border-gray-500 rounded p-2 shadow">
