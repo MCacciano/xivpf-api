@@ -44,10 +44,11 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, token = null } = req.body;
 
-  // Validate email and password
-  if (!email || !password) {
+  // if a token comes thru an email will come with it
+  
+  if (!token && (!email || !password)) {
     return next(new ErrorResponse('Please enter an email and password', 400));
   }
 
@@ -59,7 +60,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   // Check if password matches
-  const isMatch = await user.matchPassword(password);
+  const isMatch = token || await user.matchPassword(password);
 
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credentials', 401));

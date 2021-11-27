@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import useUser from '../../hooks/useUser';
 
@@ -5,14 +6,24 @@ const API_URL = 'http://localhost:5000/api/v1';
 
 const Navigation = () => {
   const {
-    state: { user },
+    state: { user, token },
     setUser
   } = useUser();
+
+  const [preLoaded, setPreLoaded] = useState(null);
+
+  useEffect(() => {
+    if (!preLoaded && localStorage.getItem('lfgpf-token')) {
+      setPreLoaded(localStorage.getItem('lfgpf-token'));
+    }
+  }, []);
 
   const handleOnLogout = async () => {
     try {
       await fetch(`${API_URL}/auth/logout`);
+      localStorage.removeItem('lfgpf-token');
       setUser(null);
+      setPreLoaded(false);
     } catch (err) {
       console.error(err);
     }
@@ -26,9 +37,13 @@ const Navigation = () => {
       <Link href="/">
         <a className="font-bold text-2xl">LFGPF</a>
       </Link>
-      {user ? (
+      {preLoaded || user ? (
         <div className="flex space-x-4">
-          <p>{user.name}</p>
+          {user && (
+            <div>
+              <p>{user.name}</p>
+            </div>
+          )}
           <button type="button" onClick={handleOnLogout} className="text-red-600 text-xs underline">
             Logout
           </button>

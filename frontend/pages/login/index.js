@@ -1,12 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useUser from '../../hooks/useUser';
 
 const API_URL = 'http://localhost:5000/api/v1';
 
 export default function LoginPage() {
-  const { setUser, setToken } = useUser();
+  const {
+    state: { user },
+    setUser,
+    setToken
+  } = useUser();
   const router = useRouter();
+
+  // useEffect(() => {
+  //   if (localStorage.getItem('lfgpf-token')) {
+  //     const fetchUserDetails = async () => {
+  //       const token = localStorage.getItem('lfgpf-token');
+
+  //       const userRes = await fetch(`${API_URL}/auth/me`, {
+  //         headers: { Authorization: `Bearer ${token}` }
+  //       });
+
+  //       const { data: userDetails } = await userRes.json();
+  //       setUser(userDetails);
+
+  //       const res = await fetch(`${API_URL}/auth/login`, {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         },
+  //         body: JSON.stringify({ email: userDetails.email, token })
+  //       });
+  //       const { token: newToken } = await res.json();
+  //       localStorage.setItem('token', newToken);
+  //       setToken(newToken);
+  //       router.push('/');
+  //     };
+
+  //     fetchUserDetails();
+  //   }
+
+  //   return () => null;
+  // }, []);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -15,6 +50,27 @@ export default function LoginPage() {
 
   const handleOnChange = e => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const fetchUserDetails = async () => {
+    const { email, password } = formData;
+
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+    const { token } = await res.json();
+
+    const userRes = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const { data: userDetails } = await userRes.json();
+
+    return { userDetails, token };
   };
 
   const handleOnSubmit = async e => {
@@ -28,27 +84,16 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
-      const { token } = await res.json();
-
-      const userRes = await fetch(`${API_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const { data: userDetails } = await userRes.json();
+      const { userDetails, token } = await fetchUserDetails();
 
       setToken(token);
       setUser(userDetails);
 
+      localStorage.setItem('lfgpf-token', token);
+
       router.push('/');
     } catch (err) {
       console.error(err);
-      0;
     }
   };
 
