@@ -3,10 +3,8 @@ import useUser from '../hooks/useUser';
 
 import GroupList from '../components/GroupList/GroupList';
 
-const API_URL = 'http://localhost:5000/api/v1';
-
 const fetchGroups = async () => {
-  const res = await fetch(`${API_URL}/groups`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups`);
   const { data } = await res.json();
   return data;
 };
@@ -20,7 +18,7 @@ export default function Home({ data }) {
 
   const handleOnJoinGroup = async id => {
     try {
-      await fetch(`${API_URL}/groups/${id}/join`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${id}/join`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
       });

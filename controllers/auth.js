@@ -47,7 +47,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const { email, password, token = null } = req.body;
 
   // if a token comes thru an email will come with it
-  
+
   if (!token && (!email || !password)) {
     return next(new ErrorResponse('Please enter an email and password', 400));
   }
@@ -60,7 +60,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   // Check if password matches
-  const isMatch = token || await user.matchPassword(password);
+  const isMatch = token || (await user.matchPassword(password));
 
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credentials', 401));

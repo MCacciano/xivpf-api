@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import useUser from '../../hooks/useUser';
 
-const API_URL = 'http://localhost:5000/api/v1';
-
 const Navigation = () => {
   const {
     state: { user, token },
@@ -20,7 +18,7 @@ const Navigation = () => {
 
   const handleOnLogout = async () => {
     try {
-      await fetch(`${API_URL}/auth/logout`);
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`);
       localStorage.removeItem('lfgpf-token');
       setUser(null);
       setPreLoaded(false);
@@ -44,7 +42,11 @@ const Navigation = () => {
               <p>{user.name}</p>
             </div>
           )}
-          <button type="button" onClick={handleOnLogout} className="text-red-600 text-xs underline">
+          <button
+            type="button"
+            onClick={handleOnLogout}
+            className="text-red-600 text-xs underline"
+          >
             Logout
           </button>
         </div>
