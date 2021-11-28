@@ -28,7 +28,8 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }]
+  groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
+  character: Object
 });
 
 // Encrypt password with bcryptjs

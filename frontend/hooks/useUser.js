@@ -18,6 +18,7 @@ const useUser = () => {
         });
 
         const { data: userDetails } = await userRes.json();
+
         setUser(userDetails);
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
