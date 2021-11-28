@@ -30,7 +30,7 @@ export default function Home({ data }) {
   };
 
   return (
-    <div>
+    <div className="my-10 mx-auto max-w-screen-md">
       <GroupList user={user} groups={groups} onJoinGroup={handleOnJoinGroup} />
     </div>
   );

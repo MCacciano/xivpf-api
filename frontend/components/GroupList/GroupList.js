@@ -1,6 +1,6 @@
 const GroupList = ({ user, groups = [], onJoinGroup }) => {
   return (
-    <div className="flex flex-col space-y-6 m-6">
+    <div className="flex flex-col space-y-6 mx-10">
       {groups.map(({ _id, name, members, owner }) => {
         return (
           <div key={_id} className="border border-gray-500 rounded p-2 shadow">
@@ -25,7 +25,8 @@ const GroupList = ({ user, groups = [], onJoinGroup }) => {
             <div className="text-sm">
               <h2 className="font-medium">Members</h2>
               <div className="flex space-x-4 text-blue-600">
-                {members.length && members.map(({ _id, name }) => <div key={_id}>{name}</div>)}
+                {members.length &&
+                  members.map(({ _id, name }) => <div key={_id}>{name}</div>)}
               </div>
             </div>
           </div>

@@ -31,7 +31,7 @@ const Navigation = () => {
 
   return (
     <nav
-      className="sticky top-0 flex justify-between items-center px-6 py-2 border-b border-black bg-white"
+      className="sticky top-0 flex justify-between items-center px-10 py-2 border-b border-black bg-white"
       style={{ zIndex: '9999' }}
     >
       <Link href="/">
@@ -41,7 +41,7 @@ const Navigation = () => {
         <div className="flex space-x-4">
           {user && (
             <div
-              className="flex gap-x-2 relative border border-gray-400 rounded shadow py-1.5 pl-3 pr-8 cursor-pointer"
+              className="flex gap-x-2 relative border border-black rounded shadow py-1.5 pl-3 pr-8 cursor-pointer"
               onClick={() => {
                 setShow(prev => (prev === '' ? 'nav' : ''));
               }}
@@ -55,9 +55,9 @@ const Navigation = () => {
                 </p>
               </div>
               {show === 'nav' && (
-                <div className="w-full absolute left-0 top-full mt-1 border border-gray-400 bg-white rounded shadow">
+                <div className="w-full absolute left-0 top-full mt-1 border border-black bg-white rounded shadow">
                   <Link href="/">
-                    <a className="block border-b border-gray-400 p-2 hover:bg-gray-400 hover:text-white">
+                    <a className="block border-b border-black p-2 hover:bg-gray-400 hover:text-white">
                       Home
                     </a>
                   </Link>
