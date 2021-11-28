@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -28,7 +27,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+  app.use(require('morgan')('dev'));
 }
 
 // Sanitize data
