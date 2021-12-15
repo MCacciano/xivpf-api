@@ -10,6 +10,8 @@ const User = require('../models/User');
 exports.getGroups = asyncHandler(async (req, res, next) => {
   const groups = await Group.find(req.query).populate(`members`, `name`);
 
+  console.log(`groups`, groups);
+
   res.status(200).json({ success: true, data: groups, count: groups.length });
 });
 
@@ -36,7 +38,9 @@ exports.createGroup = asyncHandler(async (req, res, next) => {
   const publishedGroup = await Group.findOne({ owner: req.user.id });
 
   if (publishedGroup) {
-    return next(new ErrorResponse(`The user with ID ${req.user.id} has already created a group.`));
+    return next(
+      new ErrorResponse(`The user with ID ${req.user.id} has already created a group.`)
+    );
   }
 
   const group = await Group.create({ ...req.body, owner: req.user.id });
@@ -88,6 +92,9 @@ exports.deleteGroup = asyncHandler(async (req, res, next) => {
 // @desc      update a groups members and a users groups when user joins or leaves a group
 // @route     PUT /api/v1/groups/:id/join
 // @access    Private
+
+// TODO: this is currently handling joining and leaving a group
+// TODO: split this into their respsective handlers
 exports.joinGroup = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   const group = await Group.findById(req.params.id);
@@ -116,7 +123,11 @@ exports.joinGroup = asyncHandler(async (req, res, next) => {
     }
   );
 
-  await User.findByIdAndUpdate(req.user.id, { groups }, { new: true, runValidators: true });
+  await User.findByIdAndUpdate(
+    req.user.id,
+    { groups },
+    { new: true, runValidators: true }
+  );
 
   res.status(200).json({ success: true });
 });
