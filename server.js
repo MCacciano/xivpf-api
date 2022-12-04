@@ -17,28 +17,23 @@ connectDB();
 
 // Routes
 const authRoutes = require('./routes/auth');
-const groupsRoutes = require('./routes/groups');
+// const groupsRoutes = require('./routes/groups');
 
 const app = express();
-
-// cookie parser
-app.use(cookieParser());
-// body parser
-app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(require('morgan')('dev'));
 }
-
+// cookie parser
+app.use(cookieParser());
+// body parser
+app.use(express.json());
 // Sanitize data
 app.use(mongoSanitize());
-
 // set security headers
 app.use(helmet());
-
 // prevent XSS attacks
 app.use(xss());
-
 // cors
 app.use(cors());
 
@@ -55,7 +50,6 @@ app.use(hpp());
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/groups', groupsRoutes);
 
 // errorHandler middleware
 app.use(errorHandler);
