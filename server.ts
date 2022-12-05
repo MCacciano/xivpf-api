@@ -9,15 +9,14 @@ const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 
 const errorHandler = require('./middleware/error');
-const connectDB = require('./config/db');
+const dbConnect = require('./config/db');
 
 dotenv.config({ path: './config/.env' });
 
-connectDB();
+dbConnect();
 
 // Routes
 const authRoutes = require('./routes/auth');
-// const groupsRoutes = require('./routes/groups');
 
 const app = express();
 
@@ -51,7 +50,7 @@ app.use(hpp());
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
 
-// errorHandler middleware
+// error handler middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
@@ -61,7 +60,7 @@ const server = app.listen(
   console.log(`Server running in ${process.env.NODE_ENV} mode at port ${PORT}`)
 );
 
-process.on('unhandledRejection', (err, promise) => {
+process.on('unhandledRejection', (err: { message: string }, promise) => {
   if (err) {
     console.error(`Error: ${err.message}`);
   }

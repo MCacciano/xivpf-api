@@ -58,7 +58,7 @@ const logout = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: {} });
 });
 
-const getMe = asyncHandler(async (req, res, next) => {
+const getCurrentUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
   res.status(200).json({ success: true, data: user });
@@ -83,6 +83,6 @@ module.exports = {
   register,
   login,
   logout,
-  getMe,
+  getCurrentUser,
   forgotPassword
 };
