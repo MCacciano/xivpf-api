@@ -1,12 +1,13 @@
-const jwt = require('jsonwebtoken');
-const asyncHandler = require('./async');
-const ErrorResponse = require('../utils/errorResponse');
+import type { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import asyncHandler from './async';
+import ErrorResponse from '../utils/errorResponse';
 
-const User = require('../models/User');
+import User from '../models/User';
 
 // Protect routes
-const protect = asyncHandler(async (req, res, next) => {
-  let token;
+const protect = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  let token: string;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
@@ -34,4 +35,4 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = protect;
+export default protect;

@@ -1,0 +1,6 @@
+{
+  "ignore": [".git", "node_modules", "dist"],
+  "watch": ["./"],
+  "exec": "yarn ts-node ./server.ts",
+  "ext": ".ts, .js"
+}

@@ -1,14 +1,14 @@
-const asyncHandler = require('../middleware/async');
-const ErrorResponse = require('../utils/errorResponse');
+import asyncHandler from '../middleware/async';
+import ErrorResponse from '../utils/errorResponse';
 
-const User = require('../models/User');
+import User from '../models/User';
 
 function sendTokenResponse(user, statusCode, res) {
   // Create token
   const token = user.getSignedJwtToken();
 
   const options = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + +process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production' // it prod use the secure flag for https
   };
@@ -58,7 +58,7 @@ const logout = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: {} });
 });
 
-const getMe = asyncHandler(async (req, res, next) => {
+const getCurrentUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
   res.status(200).json({ success: true, data: user });
@@ -79,10 +79,4 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
-module.exports = {
-  register,
-  login,
-  logout,
-  getMe,
-  forgotPassword
-};
+export { register, login, logout, getCurrentUser, forgotPassword };

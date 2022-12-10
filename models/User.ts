@@ -1,11 +1,19 @@
-const crypto = require('crypto');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import crypto from 'crypto';
+import { Schema, model } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const Schema = mongoose.Schema;
+interface IUser {
+  username: string;
+  email: string;
+  password: string;
+  resetPasswordToken: string;
+  resetPasswordExpire: number;
+  createdAt: number;
+  character: any;
+}
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<IUser>({
   username: {
     type: String,
     required: [true, 'Please enter a username']
@@ -66,4 +74,4 @@ UserSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-module.exports = mongoose.model('User', UserSchema);
+export default model('User', UserSchema);
