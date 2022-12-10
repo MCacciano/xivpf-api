@@ -3,4 +3,4 @@ const asyncHandler =
   (...args) =>
     Promise.resolve(fn(...args)).catch(args[2]);
 
-module.exports = asyncHandler;
+export default asyncHandler;
