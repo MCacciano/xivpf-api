@@ -10,6 +10,9 @@ import hpp from 'hpp';
 import errorHandler from './middleware/error';
 import connectDB from './config/db';
 
+// routers
+import postsRouter from './routes/posts';
+
 dotenv.config({ path: './config/.env' });
 
 connectDB();
@@ -17,7 +20,7 @@ connectDB();
 import authRoutes from './routes/auth';
 // Routes
 
-const app = express();
+const app: express.Application = express();
 
 if (process.env.NODE_ENV === 'development') {
   app.use(require('morgan')('dev'));
@@ -48,6 +51,7 @@ app.use(hpp());
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/posts', postsRouter);
 
 // error handler middleware
 app.use(errorHandler);
