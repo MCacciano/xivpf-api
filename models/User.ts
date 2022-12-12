@@ -1,16 +1,19 @@
 import crypto from 'crypto';
-import { Schema, model } from 'mongoose';
+import { Schema, Document, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-interface IUser {
+export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   resetPasswordToken: string;
   resetPasswordExpire: number;
-  createdAt: number;
+  createdAt: Date;
   character: any;
+  getSignedJwtToken: () => string;
+  getResetPasswordToken: () => string;
+  matchPassword: (password: string) => Promise<boolean>;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -74,4 +77,4 @@ UserSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-export default model('User', UserSchema);
+export default model<IUser>('User', UserSchema);

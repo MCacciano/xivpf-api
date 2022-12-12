@@ -5,8 +5,12 @@ import ErrorResponse from '../utils/errorResponse';
 
 import User from '../models/User';
 
+interface RequestUser extends Request {
+  user?: typeof User;
+}
+
 // Protect routes
-const protect = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+const protect = asyncHandler(async (req: RequestUser, res: Response, next: NextFunction) => {
   let token: string;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -24,7 +28,7 @@ const protect = asyncHandler(async (req: Request, res: Response, next: NextFunct
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
 
     req.user = await User.findById(decoded.id);
 
