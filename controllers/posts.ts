@@ -7,7 +7,6 @@ import ErrorResponse from '../utils/errorResponse';
 export const getAllPosts = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const posts: IPost[] = await Post.find().populate({ path: 'user' });
-
     res.status(200).json({ success: true, data: posts });
   }
 );
@@ -41,7 +40,9 @@ export const updatePost = asyncHandler(
       params: { postId }
     }: { body: IPost; params: any } = req;
 
-    const updatedPost: IPost = await Post.findByIdAndUpdate(postId, body);
+    const updatedPost: Awaited<IPost> = await Post.findByIdAndUpdate(postId, body, {
+      new: true
+    });
 
     res.status(200).json({ success: true, data: updatedPost });
   }

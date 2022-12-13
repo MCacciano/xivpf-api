@@ -1,16 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import asyncHandler from './async';
+import asyncHandler, { CustomRequest } from './async';
 import ErrorResponse from '../utils/errorResponse';
 
 import User from '../models/User';
 
-interface RequestUser extends Request {
-  user?: typeof User;
-}
-
 // Protect routes
-const protect = asyncHandler(async (req: RequestUser, res: Response, next: NextFunction) => {
+const protect = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
   let token: string;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
